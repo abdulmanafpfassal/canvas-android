@@ -3,11 +3,16 @@ package com.example.canvas
 import android.app.Dialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.ImageButton
+import android.widget.LinearLayout
+import androidx.core.content.ContextCompat
+import androidx.core.view.get
 
 class MainActivity : AppCompatActivity() {
 
     private var drawingView: DrawingView? = null
+    private var mSelectedCurrentButton: ImageButton? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -16,6 +21,13 @@ class MainActivity : AppCompatActivity() {
         drawingView = findViewById(R.id.drawing_view)
         drawingView!!.setSizeForBrush(20.toFloat())
         val brush: ImageButton = findViewById(R.id.brush)
+
+        val linearColorButtons = findViewById<LinearLayout>(R.id.linear_colors)
+        mSelectedCurrentButton = linearColorButtons[2] as ImageButton
+        mSelectedCurrentButton!!.setImageDrawable(
+            ContextCompat.getDrawable(this, R.drawable.color_pellet_pressed)
+        )
+
 
         brush.setOnClickListener {
             showBrushSizeDialog()
@@ -45,5 +57,21 @@ class MainActivity : AppCompatActivity() {
             brushDialog.dismiss()
         }
         brushDialog.show()
+    }
+
+    fun paintClicked(view: View){
+        if(view !== mSelectedCurrentButton){
+            val imageButton = view as ImageButton
+            val colorTag = imageButton.tag.toString()
+            drawingView?.changeColor(colorTag)
+
+            imageButton.setImageDrawable(
+                ContextCompat.getDrawable(this, R.drawable.color_pellet_pressed)
+            )
+            mSelectedCurrentButton?.setImageDrawable(
+                ContextCompat.getDrawable(this, R.drawable.color_pellet)
+            )
+            mSelectedCurrentButton = view
+        }
     }
 }
